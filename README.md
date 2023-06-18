@@ -1,14 +1,21 @@
 
 nodejs 后端通用小项目工程模板，rest api 专用
 
-```
+```bash
 .
 ├── app.js 主文件
-├── config 配置
-│   └── index.js 总配置
+├── conf 配置
+│   └── deployConf.js 部署配置
+│   └── requestOpenaiConf.js openai api 请求配置
 ├── package.json 包管理配置1
 ├── package-lock.json 包管理配置2
-├── router 路由
-│   ├── helloword.js 路由例子
-│   └── index.js 总路由
+├── middleware 中间件
+│   ├── chat.js 聊天api
+│   └── cross.js 跨域中间件
+```
+
+启动开发
+
+```bash
+npm run dev
 ```
