@@ -1,0 +1,18 @@
+{
+  "name": "express",
+  "version": "1.0.0",
+  "description": "create new express project",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon app.js",
+    "test": "nodemon test/test-fetch.js"
+  },
+  "author": "yeuimu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
