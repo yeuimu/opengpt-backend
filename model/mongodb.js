@@ -11,7 +11,7 @@ mongoose.connect(`${mongodbConf.url}/${mongodbConf.dbName}`,{
 const mongodb = mongoose.connection;
 mongodb.on('error', error => error && console.error(error));
 mongodb.on('open', () => console.log(colors('green', 'Mongodb:'), 'mongodb is connected'));
-mongodb.on('close', () => console.log(colors('green', 'Mongodb:'), 'mongodb is closed'))
+mongodb.on('close', () => console.log(colors('green', 'Mongodb:'), 'mongodb is closed'));
 
 const authSchema = mongoose.Schema({
     email: {

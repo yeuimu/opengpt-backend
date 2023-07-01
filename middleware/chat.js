@@ -1,9 +1,7 @@
 const express = require('express');
 const middlewareChat = express.Router();
-const tokenIsValid = require('../src/verifyToken');
-const openaiAnswer = require('../src/requestOpenaiChat');
+const chat = require('../src/chat');
 
-middlewareChat.post('/', tokenIsValid);
-middlewareChat.post('/', openaiAnswer);
+middlewareChat.post('/', chat);
 
 module.exports = middlewareChat;

@@ -1,6 +1,6 @@
 const express = require('express');
 const middlewareCross = express.Router();
-const crossOrigin = require('../src/crossOrigin');
+const crossOrigin = require('../src/cross');
 
 middlewareCross.use('/', crossOrigin);
 
