@@ -1,7 +1,7 @@
 const express = require('express');
-const middlewareChat = express.Router();
+const apiChat = express.Router();
 const chat = require('../src/chat');
 
-middlewareChat.post('/', chat);
+apiChat.post('/', chat);
 
-module.exports = middlewareChat;
+module.exports = apiChat;

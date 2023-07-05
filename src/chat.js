@@ -10,6 +10,7 @@ const constructJson = (messages) => JSON.stringify({
     stream: true
 })
 
+// parse openai api response messages
 const parseSnippets = new Transform({
     decodeStrings: false,
     transform(chunk, _, callback) {
