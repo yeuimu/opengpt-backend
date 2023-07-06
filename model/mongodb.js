@@ -24,7 +24,7 @@ const authSchema = mongoose.Schema({
         type: String,
         required: true,
         set(password) {
-            return bcrypt.hash(password, 10);
+            return bcrypt.hashSync(password, 10);
         }
     }
 });
