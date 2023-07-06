@@ -9,7 +9,7 @@ apiRegister.post('/', [
   check('email').isEmail().withMessage('Invalid email')
                 .custom(async (email) => {
                   const findResult = await auth.find({email: email});
-                  if(!findResult) return Promise.reject('Email already exist');
+                  if(findResult) return Promise.reject('Email already exist');
                 }),
   check('password').isLength({ min: 8 }).withMessage('The password must be at least 8 chars'),
   check('code').isNumeric().withMessage('The verify code must be numberic')
@@ -21,10 +21,7 @@ apiRegister.post('/', [
     return res.status(400).json({ errors: errors.array() })
   }
 
-  const email = req.body.email;
-  const password = req.body.password;
-  const code = req.body.code;
-
+  const { email, password, code } = req.body;
   // Verify code whether is valid
   try {
     const verifyCode = await redisClient.get(email);
