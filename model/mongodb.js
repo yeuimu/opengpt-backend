@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const colors = require('colors-console');
+const bcrypt = require('bcrypt');
 
 const { mongodbConf } = require('../conf/dbConf');
 
@@ -19,9 +20,13 @@ const authSchema = mongoose.Schema({
         required: true,
         unique: true
     },
-    password: String
-}, {
-    timestamps: true
+    password: {
+        type: String,
+        required: true,
+        set(password) {
+            return bcrypt.hash(password, 10);
+        }
+    }
 });
 
 const auth = mongoose.model('auth', authSchema);
