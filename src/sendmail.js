@@ -10,9 +10,8 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-const sendmail = async mail => {
+const sendmail = async (mail, code) => {
   try {
-    const code = String(Math.floor(Math.random() * 1000000)).padEnd(6, '0');
     await transporter.sendMail({
       from: `"OpenGP"<2197651308@qq.com>`,
       subject: 'verify code',
