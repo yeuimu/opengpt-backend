@@ -12,21 +12,19 @@ const generateCode = () => String(Math.floor(Math.random() * 1000000)).padEnd(6,
 apiSendCode.post('/',
 [
   check('email').isEmail().withMessage('Invalid email')
-                // Verify whether is existed
-                .custom(async (email) => {
-                  const findResult = await auth.find({email: email});
-                  if(!findResult) return Promise.reject('Email already exist');
-                })
 ],
 async (req, res) => {
   // To verify valid of the email
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array() })
-  }
+  if (!validationResult(req).isEmpty())
+  return res.status(422).json({ errors: errors.array() });
+
+  const email = req.body.email;
+
+  // Check whether the CAPTCHA is repeatedly obtained for a short time
+  if (await redisClient.get(email) && await redisClient.ttl(email) > 60 * 9)
+  return res.status(429).send({ message: 'Please try again after one minute' });
 
   // The verify code is sending to user with own QQ Mail and set which in redis
-  const email = req.body.email;
   const code = generateCode();
   try {
     if(await sendmail(email, code)) {
@@ -37,7 +35,7 @@ async (req, res) => {
   } catch (error) {
     if (error) {
       console.log(colors('red', 'Code:'), `${email} 验证码发送过程中，系统错误\n`, error);
-      res.status(500).json({message: 'An error has occurred in code api'})
+      return res.status(500).json({message: 'An error has occurred in code api'})
     }
   }
 })
