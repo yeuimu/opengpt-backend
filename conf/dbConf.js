@@ -11,7 +11,12 @@ const mongodbConf = {
     dbName: 'opengpt'
 }
 
+const redisConf = {
+    url: 'redis://localhost:6379'
+}
+
 module.exports = {
     sqlite3Conf,
-    mongodbConf
+    mongodbConf,
+    redisConf
 }
