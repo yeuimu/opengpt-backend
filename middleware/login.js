@@ -1,5 +1,5 @@
 const { check, validationResult } = require('express-validator');
-const { auth } = require('../model/mongodb');
+const { User } = require('../model/mongodb');
 const jwt = require('jsonwebtoken');
 const apiLogin = require('express').Router();
 const bcrypt = require('bcrypt');
@@ -10,7 +10,7 @@ const redisClient = require('../model/redis');
 apiLogin.post('/code', [
   check('email').isEmail().withMessage('Invalid email')
                 .custom(async (email) => {
-                  const findResult = await auth.find({email: email});
+                  const findResult = await User.find({email: email});
                   if(!findResult) return Promise.reject('Email does not exist');
                 }),
   check('code').isNumeric().withMessage('The verify code must be numberic')
@@ -26,22 +26,22 @@ async (req, res) => {
   const { email, code } = req.body;
   // Verify code whether is valid
   try {
-     if (code === verifyCode) {
-      const user = await auth.findOne({email: email})
+    const verifyCode = await redisClient.get(email);
+    if (code === verifyCode) {
+      const user = await User.findOne({email: email})
       const id = String(user._id);
 
       if (await redisClient.get(id) && await redisClient.ttl(id) > 60 * 60 * 24 - 60 * 5)
       return res.status(429).send({ message: 'Please try again after five minute' });
 
-      const token = jwt.sign({
-        id: id
-      }, require('../conf/deployConf').secret);
-      await redisClient.set(id, token);
-      await redisClient.expire(id, 60 * 60 * 24);
+      // Generate the token
+      const token = jwt.sign({ id: id }, require('../conf/deployConf').secret, { expiresIn: '24h' });
+      redisClient.set(id, token);
+      redisClient.expire(id, 60 * 60 * 24);
 
       res.send({
         message: 'Your account is logined successfully!',
-        token: token
+        token: 'Bearer ' + token
       });
 
       console.log(colors('green', 'Register:'), `${email} 登录成功`);
@@ -58,7 +58,7 @@ async (req, res) => {
 apiLogin.post('/pwd', [
   check('email').isEmail().withMessage('Invalid email')
                 .custom(async (email) => {
-                  const findResult = await auth.find({email: email});
+                  const findResult = await User.find({email: email});
                   if(!findResult) return Promise.reject('Email does not exist');
                 })
 ], 
@@ -72,7 +72,7 @@ async (req, res) => {
   // Verify the email and password
   const { email, password } = req.body;
   try {
-    const user = await auth.findOne({email: email});
+    const user = await User.findOne({email: email});
     const id = String(user._id);
 
     // Check the passwrod
@@ -84,15 +84,13 @@ async (req, res) => {
     return res.status(429).send({ message: 'Please try again after five minute' });
 
     // Generate the token
-    const token = jwt.sign({
-      id: id
-    }, require('../conf/deployConf').secret);
+    const token = jwt.sign({ id: id }, require('../conf/deployConf').secret, { expiresIn: '24h' });
     redisClient.set(id, token);
     redisClient.expire(id, 60 * 60 * 24);
 
     res.send({
     message: 'Your account is logined successfully!',
-    token: token
+    token: 'Bearer ' + token
     });
 
     console.log(colors('green', 'Register:'), `${email} 登录成功`);

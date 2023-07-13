@@ -14,7 +14,7 @@ mongodb.on('error', error => error && console.error(error));
 mongodb.on('open', () => console.log(colors('green', 'Mongodb:'), 'mongodb is connected'));
 mongodb.on('close', () => console.log(colors('green', 'Mongodb:'), 'mongodb is closed'));
 
-const authSchema = mongoose.Schema({
+const userSchema = mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -26,12 +26,15 @@ const authSchema = mongoose.Schema({
         set(password) {
             return bcrypt.hashSync(password, 10);
         }
+    },
+    tokens: {
+        type: Number,
+        default: 10000
     }
 });
 
-const auth = mongoose.model('auth', authSchema);
+const User = mongoose.model('User', userSchema);
 
 module.exports = {
-    mongodb,
-    auth
+    User
 }

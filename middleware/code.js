@@ -1,6 +1,6 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
-const { auth } = require('../model/mongodb');
+const { User } = require('../model/mongodb');
 const apiSendCode = express.Router();
 const sendmail = require('../src/sendmail');
 const redisClient = require('../model/redis');

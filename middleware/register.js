@@ -1,14 +1,14 @@
 const express = require('express');
 const { check, validationResult } = require('express-validator');
 const redisClient = require('../model/redis');
-const { auth } = require('../model/mongodb');
+const { User } = require('../model/mongodb');
 const colors = require('colors-console');
 const apiRegister = express.Router();
 
 apiRegister.post('/', [
   check('email').isEmail().withMessage('Invalid email')
                 .custom(async (email) => {
-                  const findResult = await auth.find({email: email});
+                  const findResult = await User.findOne({email: email});
                   if(findResult) return Promise.reject('Email already exist');
                 }),
   check('password').isLength({ min: 8 }).withMessage('The password must be at least 8 chars'),
@@ -26,7 +26,7 @@ apiRegister.post('/', [
   try {
     const verifyCode = await redisClient.get(email);
     if (code === verifyCode) {
-      const createResult = await auth.create({
+      const createResult = await User.create({
         email: email,
         password: password
       })
